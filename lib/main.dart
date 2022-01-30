@@ -119,14 +119,14 @@ class _MyHomePageState extends State<MyHomePage> {
                                 "Study",
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 25,
+                                  fontSize: 40,
                                 ),
                               ),
                               Text(
                                 " List",
                                 style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 25,
+                                    fontSize: 40,
                                     fontWeight: FontWeight.w100),
                               )
                             ],
@@ -138,10 +138,10 @@ class _MyHomePageState extends State<MyHomePage> {
                             decoration: BoxDecoration(
                               color: const Color(0xFF246E96),
                               borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(20.0),
-                                topRight: Radius.circular(20.0),
-                                bottomLeft: Radius.circular(20.0),
-                                bottomRight: Radius.circular(20.0),
+                                topLeft: Radius.circular(40.0),
+                                topRight: Radius.circular(40.0),
+                                bottomLeft: Radius.circular(40.0),
+                                bottomRight: Radius.circular(40.0),
                               ),
                               border: Border.all(
                                 width: 10,
@@ -175,7 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 30.0,
-                                              fontWeight: FontWeight.normal),
+                                              fontWeight: FontWeight.w100),
                                         ),
                                         Padding(
                                           padding: EdgeInsets.all(8.0),
@@ -192,7 +192,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                   const Expanded(
                                     child: Padding(
-                                      padding: EdgeInsets.all(8.0),
+                                      padding: EdgeInsets.all(4.0),
                                       child: TextField(
                                           decoration: InputDecoration(
                                               prefixIcon: Icon(Icons.search),
