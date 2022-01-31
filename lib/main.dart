@@ -1,4 +1,9 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'models/session.dart';
 
 void main() {
   runApp(const MyApp());
@@ -48,168 +53,179 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+Future<List<Session>> fetchSessions() async {
+  final response = await http.get(Uri.parse('http://localhost:3000/sessions'));
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    // then parse the JSON.
+    log(response.body);
+    return (jsonDecode(response.body) as List)
+        .map((data) => Session.fromJson(data))
+        .toList();
+    //.toList();
+  } else {
+    // If the server did not return a 200 OK response,
+    // then throw an exception.
+    throw Exception('Failed to load Sessions');
+  }
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  late Future<List<Session>> sessions;
+
+  @override
+  void initState() {
+    super.initState();
+    sessions = fetchSessions();
+    log('sessions: $sessions');
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    // This method is rerun every time setState is called dsdhfasdusda
     return Scaffold(
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Stack(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          children: <Widget>[
-            Positioned(
-              top: 0,
-              child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * .40,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF357EA5),
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(70),
-                    ),
-                    border: Border.all(
-                      width: 3,
-                      color: const Color(0xFF357EA5),
-                      style: BorderStyle.solid,
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(50.0),
-                    child: Column(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Text(
-                                "Study",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 40,
-                                ),
-                              ),
-                              Text(
-                                " List",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 40,
-                                    fontWeight: FontWeight.w100),
-                              )
-                            ],
-                          ),
+      body: Column(
+        children: [
+          Expanded(
+            child: Stack(
+              children: <Widget>[
+                Positioned(
+                  top: 0,
+                  child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * .40,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF357EA5),
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(70),
                         ),
-                        Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height * .20,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF246E96),
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(40.0),
-                                topRight: Radius.circular(40.0),
-                                bottomLeft: Radius.circular(40.0),
-                                bottomRight: Radius.circular(40.0),
-                              ),
-                              border: Border.all(
-                                width: 10,
-                                color: const Color(0xFF357EA5),
-                                style: BorderStyle.solid,
-                              ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Expanded(
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: const [
-                                        Padding(
-                                          padding: EdgeInsets.all(8.0),
-                                          child: Text(
-                                            "Studies",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 30.0,
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                        ),
-                                        Text(
-                                          "|",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 30.0,
-                                              fontWeight: FontWeight.w100),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.all(8.0),
-                                          child: Text(
-                                            "Notes",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 30.0,
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                        ),
-                                      ],
+                        border: Border.all(
+                          width: 3,
+                          color: const Color(0xFF357EA5),
+                          style: BorderStyle.solid,
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(50.0),
+                        child: Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  Text(
+                                    "Study",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 40,
                                     ),
                                   ),
-                                  const Expanded(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(4.0),
-                                      child: TextField(
-                                          decoration: InputDecoration(
-                                              prefixIcon: Icon(Icons.search),
-                                              filled: true,
-                                              fillColor: Colors.white,
-                                              hintText: "Search by keyword")),
-                                    ),
-                                  ),
+                                  Text(
+                                    " List",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 40,
+                                        fontWeight: FontWeight.w100),
+                                  )
                                 ],
                               ),
-                            ))
-                      ],
-                    ),
-                  )),
+                            ),
+                            Container(
+                                width: MediaQuery.of(context).size.width,
+                                height:
+                                    MediaQuery.of(context).size.height * .20,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF246E96),
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(40.0),
+                                    topRight: Radius.circular(40.0),
+                                    bottomLeft: Radius.circular(40.0),
+                                    bottomRight: Radius.circular(40.0),
+                                  ),
+                                  border: Border.all(
+                                    width: 10,
+                                    color: const Color(0xFF357EA5),
+                                    style: BorderStyle.solid,
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Expanded(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: const [
+                                            Padding(
+                                              padding: EdgeInsets.all(8.0),
+                                              child: Text(
+                                                "Studies",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 30.0,
+                                                    fontWeight:
+                                                        FontWeight.normal),
+                                              ),
+                                            ),
+                                            Text(
+                                              "|",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 30.0,
+                                                  fontWeight: FontWeight.w100),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.all(8.0),
+                                              child: Text(
+                                                "Notes",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 30.0,
+                                                    fontWeight:
+                                                        FontWeight.normal),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const Expanded(
+                                        child: Padding(
+                                          padding: EdgeInsets.all(4.0),
+                                          child: TextField(
+                                              decoration: InputDecoration(
+                                                  prefixIcon:
+                                                      Icon(Icons.search),
+                                                  filled: true,
+                                                  fillColor: Colors.white,
+                                                  hintText:
+                                                      "Search by keyword")),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ))
+                          ],
+                        ),
+                      )),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          Column(
+            children: [
+              Text("Yay"),
+              Text("Yay"),
+              Text("Yay"),
+              Text("Yay"),
+              Text("Yay")
+            ],
+          )
+        ],
       ),
     );
   }
