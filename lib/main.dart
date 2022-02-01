@@ -59,7 +59,6 @@ Future<List<Session>> fetchSessions() async {
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
     // then parse the JSON.
-    log(response.body);
     return (jsonDecode(response.body) as List)
         .map((data) => Session.fromJson(data))
         .toList();
@@ -77,156 +76,254 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    sessions = fetchSessions();
-    log('sessions: $sessions');
+    //sessions = fetchSessions();
+    //log('sessions: $sessions');
   }
 
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called dsdhfasdusda
     return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            child: Stack(
-              children: <Widget>[
-                Positioned(
-                  top: 0,
-                  child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height * .40,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF357EA5),
-                        borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(70),
-                        ),
-                        border: Border.all(
-                          width: 3,
-                          color: const Color(0xFF357EA5),
-                          style: BorderStyle.solid,
-                        ),
+      body: Column(children: [
+        Expanded(
+          child: Stack(
+            children: <Widget>[
+              Positioned(
+                top: 0,
+                child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height * .40,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF357EA5),
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(70),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(50.0),
-                        child: Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
-                                  Text(
-                                    "Study",
-                                    style: TextStyle(
+                      border: Border.all(
+                        width: 3,
+                        color: const Color(0xFF357EA5),
+                        style: BorderStyle.solid,
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(50.0),
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Text(
+                                  "Study",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 40,
+                                  ),
+                                ),
+                                Text(
+                                  " List",
+                                  style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 40,
+                                      fontWeight: FontWeight.w100),
+                                )
+                              ],
+                            ),
+                          ),
+                          Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height * .20,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF246E96),
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(40.0),
+                                  topRight: Radius.circular(40.0),
+                                  bottomLeft: Radius.circular(40.0),
+                                  bottomRight: Radius.circular(40.0),
+                                ),
+                                border: Border.all(
+                                  width: 10,
+                                  color: const Color(0xFF357EA5),
+                                  style: BorderStyle.solid,
+                                ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Expanded(
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: const [
+                                          Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: Text(
+                                              "Studies",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 30.0,
+                                                  fontWeight:
+                                                      FontWeight.normal),
+                                            ),
+                                          ),
+                                          Text(
+                                            "|",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 30.0,
+                                                fontWeight: FontWeight.w100),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: Text(
+                                              "Notes",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 30.0,
+                                                  fontWeight:
+                                                      FontWeight.normal),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const Expanded(
+                                      child: Padding(
+                                        padding: EdgeInsets.all(4.0),
+                                        child: TextField(
+                                            decoration: InputDecoration(
+                                                prefixIcon: Icon(Icons.search),
+                                                filled: true,
+                                                fillColor: Colors.white,
+                                                hintText: "Search by keyword")),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ))
+                        ],
+                      ),
+                    )),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Text(
+                "Latest",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 40,
+                ),
+              ),
+              Text(
+                " Sessions",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 40,
+                    fontWeight: FontWeight.w100),
+              )
+            ],
+          ),
+        ),
+        SingleChildScrollView(
+          child: FutureBuilder(
+              future: fetchSessions(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.data == null) {
+                  return Container(
+                    child: const Center(
+                      child: Text("Loading..."),
+                    ),
+                  );
+                } else {
+                  return ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            width: 50.0,
+                            height: 110.0,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFEDF5FC),
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(15.0),
+                                  topRight: Radius.circular(15.0),
+                                  bottomLeft: Radius.circular(15.0),
+                                  bottomRight: Radius.circular(15.0),
+                                ),
+                                border: Border.all(
+                                  width: 5,
+                                  color: const Color(0xFF357EA5),
+                                  style: BorderStyle.solid,
+                                ),
+                              ),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    decoration: const BoxDecoration(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(15.0),
+                                        topRight: Radius.circular(15.0),
+                                      ),
+                                      color: Color(0xFF357EA5),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(15.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(snapshot.data[index].name,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20,
+                                              )),
+                                          const Text("Ch.4",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 15,
+                                              ))
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                  Text(
-                                    " List",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 40,
-                                        fontWeight: FontWeight.w100),
+                                  Padding(
+                                    padding: const EdgeInsets.all(15.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text("Study Name",
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 15,
+                                            )),
+                                        Text(snapshot.data[index].date)
+                                      ],
+                                    ),
                                   )
                                 ],
                               ),
                             ),
-                            Container(
-                                width: MediaQuery.of(context).size.width,
-                                height:
-                                    MediaQuery.of(context).size.height * .20,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF246E96),
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(40.0),
-                                    topRight: Radius.circular(40.0),
-                                    bottomLeft: Radius.circular(40.0),
-                                    bottomRight: Radius.circular(40.0),
-                                  ),
-                                  border: Border.all(
-                                    width: 10,
-                                    color: const Color(0xFF357EA5),
-                                    style: BorderStyle.solid,
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(20.0),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      Expanded(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: const [
-                                            Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: Text(
-                                                "Studies",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 30.0,
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                              ),
-                                            ),
-                                            Text(
-                                              "|",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 30.0,
-                                                  fontWeight: FontWeight.w100),
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: Text(
-                                                "Notes",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 30.0,
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const Expanded(
-                                        child: Padding(
-                                          padding: EdgeInsets.all(4.0),
-                                          child: TextField(
-                                              decoration: InputDecoration(
-                                                  prefixIcon:
-                                                      Icon(Icons.search),
-                                                  filled: true,
-                                                  fillColor: Colors.white,
-                                                  hintText:
-                                                      "Search by keyword")),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ))
-                          ],
-                        ),
-                      )),
-                ),
-              ],
-            ),
-          ),
-          Column(
-            children: [
-              Text("Yay"),
-              Text("Yay"),
-              Text("Yay"),
-              Text("Yay"),
-              Text("Yay")
-            ],
-          )
-        ],
-      ),
+                          ),
+                        );
+                      });
+                }
+              }),
+        )
+      ]),
     );
   }
 }
